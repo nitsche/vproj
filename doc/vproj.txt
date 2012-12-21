@@ -1,0 +1,459 @@
+*vproj.txt*                                           Simple Project Management
+*vproj*
+
+CONTENTS                                                       *vproj-contents*
+
+    1 Introduction ............................... |vproj-intro|
+    2 Explorer ................................... |vproj-explorer|
+        2.1  Mappings ............................ |vproj-explorer-mappings|
+        2.2  Commands ............................ |vproj-explorer-commands|
+    3 File Search ................................ |vproj-filesearch|
+        3.1  Mappings ............................ |vproj-filesearch-mappings|
+    4 Global Mappings ............................ |vproj-global-mappings|
+    5 Global Commands ............................ |vproj-global-commands|
+    6 Options .................................... |vproj-options|
+        6.1  Explorer Mapping .................... |g:vproj_explorer_mapping|
+        6.2  File Search Mapping ................. |g:vproj_filesearch_mapping|
+        6.3  Project Path ........................ |g:vproj_project_path|
+        6.4  Explorer Name ....................... |g:vproj_explorer_name|
+        6.5  Explorer Size ....................... |g:vproj_explorer_size|
+        6.6  Explorer Position ................... |g:vproj_explorer_position|
+        6.7  File Search Name .................... |g:vproj_filesearch_name|
+        6.8  File Search Height .................. |g:vproj_filesearch_height|
+        6.9  Sort Order .......................... |g:vproj_sort_order|
+        6.10 Sort Case Insensitive ............... |g:vproj_sort_nocase|
+        6.11 Vertical Splits ..................... |g:vproj_split_vertical|
+        6.12 Fold Icons .......................... |g:vproj_foldicons|
+        6.13 List Marker ......................... |g:vproj_listmarker|
+        6.14 Tree Indentation .................... |g:vproj_tree_indent|
+    7 Project File ............................... |vproj-file|
+
+
+
+===============================================================================
+1 INTRODUCTION                                                    *vproj-intro*
+
+vproj is a very simple project management plugin. It provides a file explorer
+to navigate the file system below a specified root directory and has the
+ability to search these files.
+
+
+
+===============================================================================
+2 EXPLORER                                                     *vproj-explorer*
+
+The explorer displays a file tree with all files and directories that matches
+the specified patterns of the project file (see |vproj-file|). The tree can be
+navigated with the Vim movement keys and a selected file can be edited by
+pressing the return key. There is also the possibility to create or delete
+files and directories from the disc. These operations will automatically update
+the file tree. External changes are not recognized and the update action must
+be triggered by hand.
+
+-------------------------------------------------------------------------------
+2.1 Mappings                                          *vproj-explorer-mappings*
+
+The following mappings are defined for the explorer:
+
+                                                            *vproj-explorer-up*
+                                                             *vproj-explorer-k*
+    |<Up>|, k
+      Move the cursor one line up and select the previous visible node in the
+      filetree.
+
+                                                          *vproj-explorer-down*
+                                                             *vproj-explorer-j*
+    |<Down>|, j
+      Move the cursor one line down and select the next visible node in the
+      filetree.
+
+                                                         *vproj-explorer-right*
+                                                             *vproj-explorer-l*
+    |<Right>|, l
+      If the selected node is not a directory there is no effect. Otherwise
+      expands a collapsed node. If the directory node is already expanded
+      the first child node is selected.
+
+                                                          *vproj-explorer-left*
+                                                             *vproj-explorer-h*
+    |<Left>|, h
+      If the selected node is a expanded directory node it is collapsed.
+      Otherwise the parent node is selected.
+
+                                                            *vproj-explorer-f5*
+                                                             *vproj-explorer-r*
+    |<F5>|, r
+      Refreshes the selected directory node. If the selected node is not a
+      directory the parent node is refreshed. A refresh action rescans all
+      containing files and subdirectories of the according directory.
+
+                                                           *vproj-explorer-del*
+                                                             *vproj-explorer-d*
+    |<Del>|, d
+      Deletes the selected node from the tree and from the disc. This action
+      must be confirmed.
+
+                                                         *vproj-explorer-s-del*
+                                                             *vproj-explorer-D*
+    <S-Del>, D
+      Deletes the selected node from the tree and from the disc without any
+      confirmation.
+
+                                                             *vproj-explorer-n*
+    n
+      Creates a new node. If the selected node is a directory it is used as the
+      parent of the new node. Otherwise the selected node and the new node are
+      siblings. If the name of the new node ends with a slash a directory is
+      created, otherwise a file is created.
+
+                                                     *vproj-explorer-leftmouse*
+    |<LeftMouse>|
+      Selects the clicked node in the filetree.
+
+                                                        *vproj-explorer-return*
+                                                    *vproj-explorer-2leftmouse*
+    |<Return>|, |<2-LeftMouse>|
+      If the selected node is a directory it expands or collapsed the node.
+      Otherwise it opens the selected file in the last used window.
+
+                                                      *vproj-explorer-c-return*
+    <C-Return>
+      Like |<Return>| but splits the window if the selected node is a file.
+
+-------------------------------------------------------------------------------
+2.2 Commands                                          *vproj-explorer-commands*
+
+The following commands are buffer local and can only be executed in the
+explorer window.
+
+                                                        *vproj-explorer-Filter*
+    :Filter name
+      Sets the filter of the file tree. The available filter names are read
+      from the project file (see |vproj-file|). The special filter "*" resets
+      the filter and shows all available files and directories.
+
+                                                        *vproj-explorer-Reload*
+    :Reload
+      Reloads the whole file tree of the open project from the disc.
+
+                                                           *vproj-explorer-New*
+    :New filename ...
+      Creates new files or directories which must be below the root directory
+      of the project. If the filename ends with a slash a directory is created.
+      Otherwise a file is created.
+
+                                                        *vproj-explorer-Remove*
+    :Remove filename ...
+      Removes files or directories from the project. This command removes the
+      nodes from the tree and deletes the files/directories from the disc.
+
+
+
+===============================================================================
+3 FILE SEARCH                                                *vproj-filesearch*
+
+The file search can be used to find files under the project's root directory.
+Once invoked it pops up a list of all files and waits for user input. The file
+list can be navigated with the arrow keys. After selecting a file one can edit
+this file by pressing the return key. To filter all files a pattern can be
+typed in. A pattern consists of a sequence of characters the filenames should
+include. A "?" matches exactly one arbitrary character and a "*" matches
+anything (including nothing). There is no need to write the whole name of
+intermediate directories. A partial names separated by a slash or a backslash
+will also match. For example, a pattern "foo/bar" will match the following
+files:
+
+    * foo/bar.hpp
+    * foobaz/foo.bar
+    * test/afoobar/somebar/file.vim
+
+-------------------------------------------------------------------------------
+3.1 Mappings                                        *vproj-filesearch-mappings*
+
+The following mappings are defined for the file search:
+
+                                                          *vproj-filesearch-up*
+    |<Up>|
+      Move the cursor one line up and select the previous visible file in the
+      file list.
+
+                                                        *vproj-filesearch-down*
+    |<Down>|
+      Move the cursor one line down and select the previous visible file in the
+      file list.
+
+                                                          *vproj-filesearch-bs*
+	|<BS>|
+      Delete the last given character of the input.
+
+                                                      *vproj-filesearch-return*
+    |<Return>|
+      Opens the currently selected file.
+
+                                                    *vproj-filesearch-c-return*
+    |<C-Return>|
+      Like |<Return>| but splits the window.
+
+                                                         *vproj-filesearch-esc*
+    |<Esc>|
+      Close the file search.
+
+
+
+===============================================================================
+4 GLOBAL MAPPINGS                                       *vproj-global-mappings*
+
+The following mappings are Vim global:
+
+                                                                    *vproj-c-e*
+    <C-E>
+      Focus the explorer window. This mapping can be changed via the
+      |g:vproj_explorer_mapping| option.
+
+                                                                    *vproj-c-f*
+    <C-F>
+      Open the file list and start the file search mode. This mapping can be
+      changed via the |g:vproj_filesearch_mapping| option.
+
+
+
+===============================================================================
+5 GLOBAL COMMANDS                                       *vproj-global-commands*
+
+                                                                *vproj-Project*
+    :Project name
+      Opens a project with a given name. The name must either be the path to
+      the project file or it must be the project's name. If only a project name
+      is given the project file is searched with the |g:vproj_project_path|
+      option.
+
+                                                           *vproj-CloseProject*
+    :CloseProject
+      Closes the currently open project.
+
+                                                          *vproj-ReloadProject*
+    :ReloadProject
+      Reloads the currently open project. This command rereads the project file
+      and refreshes the directory tree. This is usefull if changes to the
+      project are made.
+
+
+
+===============================================================================
+6 OPTIONS                                                       *vproj-options*
+
+There are some options to influence the behavior and the look of the plugin.
+The given variable declaration shows the name and the default value of the
+variable.
+
+-------------------------------------------------------------------------------
+6.1 Explorer Mapping                                 *g:vproj_explorer_mapping*
+
+>
+    let g:vproj_explorer_mapping = "<C-E>"
+<
+Use this variable to set the mapping to focus the explorer window.
+
+-------------------------------------------------------------------------------
+6.2 File Search Mapping                            *g:vproj_filesearch_mapping*
+
+>
+    let g:vproj_filesearch_mapping = "<C-F>"
+<
+Use this variable to set the mapping to start the file search mode.
+
+-------------------------------------------------------------------------------
+6.3 Project Path                                         *g:vproj_project_path*
+
+>
+    let g:vproj_project_path = '%project%.vproj'
+<
+Use this variable to set the project path that is used to look for the project
+file if the :Project command (see |vproj-Project|) is called with an project
+name only. The special pattern '%project%' is substituted with the given
+project name. This variable can also be a list of such project paths if more
+than one path exists.
+
+-------------------------------------------------------------------------------
+6.4 Explorer Name                                       *g:vproj_explorer_name*
+
+>
+    let g:vproj_explorer_name = "ProjectExplorer"
+<
+Use this variable to specify the name of the buffer the explorer should use.
+This name is also displayed in the statusline of the explorer window.
+
+-------------------------------------------------------------------------------
+6.5 Explorer Size                                       *g:vproj_explorer_size*
+
+>
+    let g:vproj_explorer_size = 32
+<
+Use this variable to specify the width of the explorer window. The width is set
+to the number of columns that should be displayed.
+
+-------------------------------------------------------------------------------
+6.6 Explorer Position                               *g:vproj_explorer_position*
+
+>
+    let g:vproj_explorer_position = 'left'
+<
+Use this variable to specify the position of the explorer window. The value is
+case insensitive and must either be "left" or "right".
+
+-------------------------------------------------------------------------------
+6.7 File Search Name                                  *g:vproj_filesearch_name*
+
+>
+    let g:vproj_filesearch_name = "FileSearch"
+<
+Use this variable to specify the name of the buffer the file list should use.
+This name is also displayed in the statusline of the list window.
+
+-------------------------------------------------------------------------------
+6.8 File Search Height                              *g:vproj_filesearch_height*
+
+>
+    let g:vproj_filesearch_height = 10
+<
+Use this variable to specify the maximum number of lines the file list window
+should use.
+
+-------------------------------------------------------------------------------
+6.9 Sort Order                                             *g:vproj_sort_order*
+
+>
+    let g:vproj_sort_order = ['/$']
+<
+Use this variable to specify the sort order of files and directories in the
+tree. Set it to a list of regular expressions the nodes should be ordered. Each
+regular expression specifies a sort group. Within each group the nodes will be
+ordered alphabetically. Nodes that matches no group are placed after all other
+nodes. Directories ends with a slash (e.g. the default value places directory
+before files).
+
+-------------------------------------------------------------------------------
+6.10 Sort Case Insensitive                                *g:vproj_sort_nocase*
+
+>
+    let g:vproj_sort_nocase = 0
+<
+Use this variable to ignore case when sorting nodes under their parent node.
+
+-------------------------------------------------------------------------------
+6.11 Vertical Splits                                   *g:vproj_split_vertical*
+
+>
+    let g:vproj_split_vertical = 0
+<
+Use this variable to do a vertical split action whenever a window is splitted.
+
+-------------------------------------------------------------------------------
+6.12 Fold Icons                                             *g:vproj_foldicons*
+
+>
+    let g:vproj_foldicons = ["\u25b8 ", "\u25be "]
+<
+Use this variable to specify the fold icons of the filetree. The first icon is
+the icon for a collapsed directory and the second icon for the expanded
+directory. There are no extra whitespaces after the icons. The icon should
+include any whitespaces needed.
+
+-------------------------------------------------------------------------------
+6.13 List Marker                                           *g:vproj_listmarker*
+
+>
+    let g:vproj_listmarker = "\u25ba "
+<
+Use this variable to specify the icon precedes a selected line in the file list
+window. There are no extra whitespaces after the icon. The icon should include
+any whitespaces needed.
+
+-------------------------------------------------------------------------------
+6.14 Tree Indentation                                     *g:vproj_tree_indent*
+
+>
+    let g:vproj_tree_indent = 2
+<
+Use this variable to specify how many columns should be used to indent the next
+hierarchy level.
+
+
+
+===============================================================================
+7 PROJECT FILE                                                     *vproj-file*
+
+The project file that can be loaded with this plugin has the following
+structure:
+>
+    # comment to end of line
+    [section]
+        variable = value
+<
+Each variable is assigned to a section and has a value. If no value is given
+the variable is identified as a boolean value set to true. Otherwise the value
+is a string. A backslash begins an escape sequence but only \n, \b, \" and \\
+are valid escape sequences. Leading and trailing whitespaces are ignored. To
+include these whitespaces surround the value with quotation marks, e.g.
+>
+    var = "  value with leading whitespaces"
+<
+If in one section a variable name appears more than once it is interpreted as a
+list of all given values, e.g. with
+>
+    var = item1
+    var = item2
+<
+the variable "var" has the value ["item1", "item2"]. Empty lines in the file
+are ignored.
+
+
+Here is a list of supported variables and the corresponding description:
+
+project.name
+    The name of the project. The root of the filetree will displayed this
+    value.
+
+project.root
+    The root directory of the project. If this value starts with / or ~ an
+    absolute path is assumed. Otherwise the root directory is interpreted as
+    relative to the path of the project file.
+
+filter.<group>
+    The filter section is used to specify which files and directories should be
+    displayed in the filetree. There can be several group names where each
+    group contains a list of regular expressions. The filetree can switch
+    between these filters by using the :Filter command (see |vproj-Filter|).
+    The regular expression is checked against the root relative path.
+    Directories ends with a slash. If the special filter name "_" is used these
+    regular expressions are common to all other filter groups. Therefore this
+    group is not available in the :Filter command. The regular expressions of
+    all the defined filter groups identify the special "*" filter descriped in
+    the |vproj-Filter| section. If no filters are defined all files and
+    directories under the root directory are displayed.
+
+ignore.<group>
+    The ignore section works like the filter section, except that the files and
+    directories that matches these regular expressions are ignored and are
+    therefore not displayed. Each ignore group is applied to the respective
+    filter group.
+
+
+Example file:
+>
+    [project]
+        name = foo
+        root = .
+    [filter]
+        _ = /$
+        Header = \\.hpp$
+        Source = \\.cpp$
+    [ignore]
+        _ = ^\\.
+<
+The root directory of this example project named foo is the same directory that
+contains the project file. The filetree will show all C++ header and source
+files except hidden files (files that starts with a dot). Also all directories
+are displayed with each filter. The :Filter command (see |vproj-Filter|) will
+support the filter names "Header" (shows all header files), "Source" (shows all
+source files) and "*" (shows all header and source files).
