@@ -59,25 +59,25 @@ The following mappings are defined for the explorer:
                                                              *vproj-explorer-k*
     |<Up>|, k
       Move the cursor one line up and select the previous visible node in the
-      filetree.
+      file tree.
 
                                                           *vproj-explorer-down*
                                                              *vproj-explorer-j*
     |<Down>|, j
       Move the cursor one line down and select the next visible node in the
-      filetree.
+      file tree.
 
                                                          *vproj-explorer-right*
                                                              *vproj-explorer-l*
     |<Right>|, l
       If the selected node is not a directory there is no effect. Otherwise
-      expands a collapsed node. If the directory node is already expanded
+      a collapsed node is expanded. If the directory node is already expanded
       the first child node is selected.
 
                                                           *vproj-explorer-left*
                                                              *vproj-explorer-h*
     |<Left>|, h
-      If the selected node is a expanded directory node it is collapsed.
+      If the selected node is an expanded directory node it is collapsed.
       Otherwise the parent node is selected.
 
                                                             *vproj-explorer-f5*
@@ -113,7 +113,7 @@ The following mappings are defined for the explorer:
                                                         *vproj-explorer-return*
                                                     *vproj-explorer-2leftmouse*
     |<Return>|, |<2-LeftMouse>|
-      If the selected node is a directory it expands or collapsed the node.
+      If the selected node is a directory it expands or collapses the node.
       Otherwise it opens the selected file in the last used window.
 
                                                       *vproj-explorer-c-return*
@@ -179,11 +179,11 @@ The following mappings are defined for the file search:
 
                                                         *vproj-filesearch-down*
     |<Down>|
-      Move the cursor one line down and select the previous visible file in the
+      Move the cursor one line down and select the next visible file in the
       file list.
 
                                                           *vproj-filesearch-bs*
-	|<BS>|
+    |<BS>|
       Delete the last given character of the input.
 
                                                       *vproj-filesearch-return*
@@ -235,7 +235,7 @@ The following mappings are Vim global:
     :ReloadProject
       Reloads the currently open project. This command rereads the project file
       and refreshes the directory tree. This is usefull if changes to the
-      project are made.
+      project file are made.
 
 
 
@@ -266,13 +266,13 @@ Use this variable to set the mapping to start the file search mode.
 6.3 Project Path                                         *g:vproj_project_path*
 
 >
-    let g:vproj_project_path = '%project%.vproj'
+    let g:vproj_project_path = "%project%.vproj"
 <
 Use this variable to set the project path that is used to look for the project
-file if the :Project command (see |vproj-Project|) is called with an project
-name only. The special pattern '%project%' is substituted with the given
-project name. This variable can also be a list of such project paths if more
-than one path exists.
+file if the :Project command (see |vproj-Project|) is called with an name only.
+The special pattern '%project%' is substituted with the given project name.
+This variable can also be a list of such project paths if more than one path
+should be used.
 
 -------------------------------------------------------------------------------
 6.4 Explorer Name                                       *g:vproj_explorer_name*
@@ -296,7 +296,7 @@ to the number of columns that should be displayed.
 6.6 Explorer Position                               *g:vproj_explorer_position*
 
 >
-    let g:vproj_explorer_position = 'left'
+    let g:vproj_explorer_position = "left"
 <
 Use this variable to specify the position of the explorer window. The value is
 case insensitive and must either be "left" or "right".
@@ -323,7 +323,7 @@ should use.
 6.9 Sort Order                                             *g:vproj_sort_order*
 
 >
-    let g:vproj_sort_order = ['/$']
+    let g:vproj_sort_order = ["/$"]
 <
 Use this variable to specify the sort order of files and directories in the
 tree. Set it to a list of regular expressions the nodes should be ordered. Each
@@ -354,9 +354,9 @@ Use this variable to do a vertical split action whenever a window is splitted.
 >
     let g:vproj_foldicons = ["\u25b8 ", "\u25be "]
 <
-Use this variable to specify the fold icons of the filetree. The first icon is
-the icon for a collapsed directory and the second icon for the expanded
-directory. There are no extra whitespaces after the icons. The icon should
+Use this variable to specify the fold icons of the file tree. The first icon is
+the icon for collapsed directories and the second icon for the expanded
+directories. There are no extra whitespaces after the icons. Each icon should
 include any whitespaces needed.
 
 -------------------------------------------------------------------------------
@@ -365,9 +365,9 @@ include any whitespaces needed.
 >
     let g:vproj_listmarker = "\u25ba "
 <
-Use this variable to specify the icon precedes a selected line in the file list
-window. There are no extra whitespaces after the icon. The icon should include
-any whitespaces needed.
+Use this variable to specify the icon that precedes a selected line in the file
+list window. There are no extra whitespaces after the icon. The icon should
+include any whitespaces needed.
 
 -------------------------------------------------------------------------------
 6.14 Tree Indentation                                     *g:vproj_tree_indent*
@@ -376,7 +376,7 @@ any whitespaces needed.
     let g:vproj_tree_indent = 2
 <
 Use this variable to specify how many columns should be used to indent the next
-hierarchy level.
+hierarchy level of the file tree.
 
 
 
@@ -392,51 +392,56 @@ structure:
 <
 Each variable is assigned to a section and has a value. If no value is given
 the variable is identified as a boolean value set to true. Otherwise the value
-is a string. A backslash begins an escape sequence but only \n, \b, \" and \\
-are valid escape sequences. Leading and trailing whitespaces are ignored. To
-include these whitespaces surround the value with quotation marks, e.g.
+is a string. A backslash starts an escape sequence where '\n', '\b', '\"' and
+'\\' are the only valid escape sequences. Leading and trailing whitespaces are
+ignored. To include these whitespaces surround the value with quotation marks,
+e.g.
 >
     var = "  value with leading whitespaces"
 <
-If in one section a variable name appears more than once it is interpreted as a
+If in a section a variable name appears more than once it is interpreted as a
 list of all given values, e.g. with
 >
     var = item1
     var = item2
 <
-the variable "var" has the value ["item1", "item2"]. Empty lines in the file
+the variable 'var' has the value ["item1", "item2"]. Empty lines in the file
 are ignored.
 
 
-Here is a list of supported variables and the corresponding description:
+Here is a list of supported variables and the corresponding description. A dot
+separates the section name and the variable name.
 
 project.name
-    The name of the project. The root of the filetree will displayed this
-    value.
+    The name of the project. The root of the file tree will display this value.
+    If no name is defined the name of the project file (without file extension)
+    is used instead.
 
 project.root
-    The root directory of the project. If this value starts with / or ~ an
+    The root directory of the project. If this value starts with '/' or '~' an
     absolute path is assumed. Otherwise the root directory is interpreted as
-    relative to the path of the project file.
+    relative to the path of the project file. If no root directory is defined
+    the directory of the project file is used instead.
 
 filter.<group>
     The filter section is used to specify which files and directories should be
-    displayed in the filetree. There can be several group names where each
-    group contains a list of regular expressions. The filetree can switch
-    between these filters by using the :Filter command (see |vproj-Filter|).
-    The regular expression is checked against the root relative path.
-    Directories ends with a slash. If the special filter name "_" is used these
-    regular expressions are common to all other filter groups. Therefore this
-    group is not available in the :Filter command. The regular expressions of
-    all the defined filter groups identify the special "*" filter descriped in
-    the |vproj-Filter| section. If no filters are defined all files and
-    directories under the root directory are displayed.
+    displayed in the file tree. There can be several group names where each
+    group contains a list of regular expressions. The file tree can switch
+    between these filters by using the :Filter command (see
+    |vproj-explorer-Filter|). The regular expression is checked against the
+    root relative path. All directories end with a slash. If the special filter
+    name '_' is used these regular expressions are shared by all other filter
+    groups. Therefore this group is not available in the :Filter command. The
+    regular expressions of all the defined filter groups identify the special
+    '*' filter descriped in the |vproj-explorer-Filter| section. If no filters
+    are defined all files and directories under the root directory are
+    displayed.
 
 ignore.<group>
     The ignore section works like the filter section, except that the files and
     directories that matches these regular expressions are ignored and are
-    therefore not displayed. Each ignore group is applied to the respective
-    filter group.
+    therefore not displayed in the file tree. Each ignore group is applied to
+    the respective filter group.
 
 
 Example file:
@@ -451,9 +456,11 @@ Example file:
     [ignore]
         _ = ^\\.
 <
-The root directory of this example project named foo is the same directory that
-contains the project file. The filetree will show all C++ header and source
-files except hidden files (files that starts with a dot). Also all directories
-are displayed with each filter. The :Filter command (see |vproj-Filter|) will
-support the filter names "Header" (shows all header files), "Source" (shows all
-source files) and "*" (shows all header and source files).
+This file defines an example project named 'foo'. Its root directory is the
+same directory that contains the given file. The file tree will display all
+C++ header and source files except hidden files (files that starts with a dot).
+Each filter contains all visible directories. The :Filter command of the
+project explorer (see |vproj-explorer-Filter|) will support the filter names
+'Header' (which displays all visible header files), 'Source' (which displays
+all visible source files) and '*' (which display all visible header and source
+files).
