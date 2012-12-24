@@ -135,6 +135,7 @@ fu vproj#close(...)
 	endif
 
 	let s:project = {}
+	let s:filetree = {}
 	let s:explorer = {}
 endf
 
