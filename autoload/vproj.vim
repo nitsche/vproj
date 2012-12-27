@@ -662,7 +662,7 @@ fu s:__explorer_lines(...) dict
 	while l:idx < len(self._nodes)
 		let l:curnode = self._nodes[l:idx]
 		if s:__explorer_siblings(l:node, l:curnode)
-			break
+			return l:lines
 		elseif l:curnode.parent() isnot l:parent
 			if l:curnode.parent().parent() is l:parent
 				" increment level
@@ -673,6 +673,9 @@ fu s:__explorer_lines(...) dict
 				while l:curnode.parent() isnot l:parent
 					let l:parent = l:parent.parent()
 					let l:indent = strpart(l:indent, self._indent)
+					if l:node.parent() is l:parent
+						return l:lines
+					endif
 				endwhile
 			endif
 		endif
