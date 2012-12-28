@@ -285,8 +285,9 @@ fu s:__directory_refresh(filtgr, filt) dict
 	let l:newsub = {}
 	for l:path in split(globpath(self.path(), '*', 1), "\n")
 		let l:fname = fnamemodify(l:path, ':t')
-		if l:path !~# '^\.\.\?$' && a:filtgr.evaluate(l:dir.l:fname)
-			let l:newsub[l:fname] = isdirectory(self.path().l:fname) ? s:new_directory(l:fname, self) : s:new_file(l:fname, self)
+		let l:isdir = isdirectory(self.path().l:fname)
+		if l:path !~# '^\.\.\?$' && a:filtgr.evaluate(l:dir.l:fname.(l:isdir ? '/' : ''))
+			let l:newsub[l:fname] = l:isdir ? s:new_directory(l:fname, self) : s:new_file(l:fname, self)
 		endif
 	endfor
 

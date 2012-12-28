@@ -434,16 +434,15 @@ fu vproj#__explorer_refresh(node) dict
 		let l:idx0 = l:node.__idx + 1
 		let l:idx1 = l:node.__idx + l:nold
 		call self._remove_nodes(l:idx0, l:idx1)
-		if l:mywin > 0
-			call s:remove_lines(l:idx0 + 1, l:idx1 + 1)
-		endif
+		call s:remove_lines(l:idx0 + 1, l:idx1 + 1)
 	endif
 
 	" insert new nodes
 	call self._tree.refresh(l:node)
 	let l:nnew = len(self._insert_subnodes(l:node))
-	if l:nnew > 0 && l:mywin > 0
-		call s:insert_lines(self._lines(l:node)[1:], l:node.__idx + 2)
+	if l:nnew > 0
+		let l:lines = self._lines(l:node)
+		call s:insert_lines(l:lines[1:], l:node.__idx + 2)
 	endif
 
 	setl nomodifiable
