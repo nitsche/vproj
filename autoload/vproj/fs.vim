@@ -211,6 +211,10 @@ fu s:__tree_find_nearest(path) dict
 	endif
 
 	let l:path = strpart(l:path, strlen(l:dir.path()))
+	if empty(l:path)
+		return l:dir
+	endif
+
 	let l:parts = split(l:path, '/')
 	for l:idx in range(len(l:parts)-1)
 		let l:child = l:dir.child(l:parts[l:idx])
